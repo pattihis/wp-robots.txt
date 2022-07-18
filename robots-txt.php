@@ -1,18 +1,33 @@
 <?php
 /**
+ * WP Robots Txt
+ *
+ * @category    WordPress
+ * @package     WPRobotsTxt
+ * @author      George Pattihis
+ * @copyright   2022 George Pattihis
+ * @license     http://opensource.org/licenses/GPL-2.0 GPL-2.0+
+ * @link        https://profiles.wordpress.org/pattihis/
+ *
  * Plugin Name: WP Robots Txt
  * Plugin URI: https://github.com/chrisguitarguy/WP-Robots-Txt
  * Description: Edit your robots.txt file from the WordPress admin
- * Version: 1.1
- * Text Domain: wp-robots-txt
- * Author: Christopher Davis
- * Author URI: http://christopherdavis.me
+ * Version: 1.2
+ * Requires at least: 5.3.0
+ * Tested up to: 6.0.1
+ * Requires PHP: 5.6
+ * Author: George Pattihis
+ * Author URI: https://profiles.wordpress.org/pattihis/
  * License: GPL-2.0+
- *
+ * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain: wp-robots-txt
+ */
+
+/**
  * Copyright 2013 Christopher Davis <http://christopherdavis.me>
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License, version 2, as 
+ * it under the terms of the GNU General Public License, version 2, as
  * published by the Free Software Foundation.
  *
  * This program is distributed in the hope that it will be useful,
@@ -23,23 +38,61 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
- * @category    WordPress
- * @package     WPRobotsTxt
- * @copyright   2013 Christopher Davis
- * @license     http://opensource.org/licenses/GPL-2.0 GPL-2.0+
  */
 
-!defined('ABSPATH') && exit;
+/**
+ * Copyright 2022  George Pattihis (gpattihis@gmail.com)
+ *
+ * "WP Robots Txt" is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * any later version.
+ *
+ * "WP Robots Txt" is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * "along with WP Robots Txt". If not, see http://www.gnu.org/licenses/gpl-2.0.txt.
+ */
 
-define('WP_ROBOTS_TXT_DIR', plugin_dir_path(__FILE__));
-
-require_once WP_ROBOTS_TXT_DIR . 'inc/core.php';
-if (is_admin()) {
-    require_once WP_ROBOTS_TXT_DIR . 'inc/options-page.php';
-    CD_RDTE_Admin_Page::init();
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
 }
 
-add_filter('robots_txt', 'cd_rdte_filter_robots', 10, 2);
-register_activation_hook(__FILE__, 'cd_rdte_activation');
-register_deactivation_hook(__FILE__, 'cd_rdte_deactivation');
+/**
+ * Current plugin version.
+ */
+define( 'WP_ROBOTS_TXT_VERSION', '1.2.0' );
+
+define( 'WP_ROBOTS_TXT_DIR', plugin_dir_path( __FILE__ ) );
+
+/**
+ * The core plugin file that is used to run our functionality.
+ */
+require_once WP_ROBOTS_TXT_DIR . 'inc/core-functionality.php';
+
+/**
+ * The core plugin class that is used to define admin options and hooks.
+ */
+if ( is_admin() ) {
+	require_once WP_ROBOTS_TXT_DIR . 'inc/class-robtxt-admin-page.php';
+	ROBTXT_Admin_Page::init();
+}
+
+/**
+ * The main hook that filters the contents of the generated file.
+ */
+add_filter( 'robots_txt', 'robtxt_filter_robots', 10, 2 );
+
+/**
+ * The code that runs during plugin activation.
+ */
+register_activation_hook( __FILE__, 'robtxt_activation' );
+
+/**
+ * The code that runs during plugin deactivation.
+ */
+register_deactivation_hook( __FILE__, 'robtxt_deactivation' );
