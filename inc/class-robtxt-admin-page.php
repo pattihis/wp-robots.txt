@@ -49,7 +49,7 @@ class ROBTXT_Admin_Page {
 	/**
 	 * The contents of the text-area.
 	 *
-	 * @since    1.0
+	 * @since    1.2
 	 * @access   private
 	 * @var      string    $ins
 	 */
@@ -58,7 +58,7 @@ class ROBTXT_Admin_Page {
 	/**
 	 * The name of our option.
 	 *
-	 * @since    1.0
+	 * @since    1.2
 	 * @access   protected
 	 * @var      string    $setting
 	 */
@@ -67,7 +67,7 @@ class ROBTXT_Admin_Page {
 	/**
 	 * Get an instance of the class.
 	 *
-	 * @since   1.0
+	 * @since   1.2
 	 * @access  public
 	 */
 	public static function instance() {
@@ -81,7 +81,7 @@ class ROBTXT_Admin_Page {
 	/**
 	 * Initialize our plugin.
 	 *
-	 * @since   1.0
+	 * @since   1.2
 	 * @access  public
 	 * @uses    add_action
 	 * @return  void
@@ -95,13 +95,15 @@ class ROBTXT_Admin_Page {
 			update_option( self::instance()->setting, $old );
 			delete_option( 'cd_rdte_content' );
 		}
+
+		add_filter( 'plugin_action_links', array( self::instance(), 'robtxt_action_links' ), 10, 2 );
 	}
 
 	/**
 	 * Registers our setting and takes care of adding the settings field
 	 * we need to edit our robots.txt file
 	 *
-	 * @since   1.0
+	 * @since   1.2
 	 * @access  public
 	 * @uses    register_setting
 	 * @uses    add_settings_field
@@ -134,7 +136,7 @@ class ROBTXT_Admin_Page {
 	/**
 	 * Callback for the settings field.
 	 *
-	 * @since   1.0
+	 * @since   1.2
 	 * @access  public
 	 * @uses    get_option
 	 * @uses    esc_attr
@@ -163,7 +165,7 @@ class ROBTXT_Admin_Page {
 	 * Strips tags and escapes any html entities that goes into the
 	 * robots.txt field
 	 *
-	 * @since 1.0
+	 * @since 1.2
 	 * @param string $contents The contents of the text-area.
 	 * @uses esc_html
 	 * @uses add_settings_error
@@ -184,7 +186,7 @@ class ROBTXT_Admin_Page {
 	/**
 	 * Get the default robots.txt content.
 	 *
-	 * @since   1.0
+	 * @since   1.2
 	 * @access  protected
 	 * @uses    get_option
 	 * @return  string The default robots.txt content
@@ -204,5 +206,26 @@ class ROBTXT_Admin_Page {
 		}
 
 		return $output;
+	}
+
+	/**
+	 * Show custom links in Plugins Page
+	 *
+	 * @since  1.2
+	 * @access public
+	 * @param  array $links Default Links.
+	 * @param  array $file Plugin's root filepath.
+	 * @return array Links list to display in plugins page.
+	 */
+	public function robtxt_action_links( $links, $file ) {
+
+		if ( WP_ROBOTS_TXT_BASENAME === $file ) {
+			$spf_links = '<a href="' . get_admin_url() . 'options-reading.php" title="Edit your robots.txt">' . __( 'Settings', 'wp-robots-txt' ) . '</a>';
+			$spf_visit = '<a href="https://gp-web.dev/" title="Contact" target="_blank" >' . __( 'Contact', 'wp-robots-txt' ) . '</a>';
+			array_unshift( $links, $spf_visit );
+			array_unshift( $links, $spf_links );
+		}
+
+		return $links;
 	}
 }

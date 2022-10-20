@@ -10,7 +10,7 @@
  * @link        https://profiles.wordpress.org/pattihis/
  *
  * Plugin Name: WP Robots Txt
- * Plugin URI: https://github.com/chrisguitarguy/WP-Robots-Txt
+ * Plugin URI: https://github.com/pattihis/wp-robots.txt
  * Description: Edit your robots.txt file from the WordPress admin
  * Version: 1.2
  * Requires at least: 5.3.0
@@ -68,6 +68,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'WP_ROBOTS_TXT_VERSION', '1.2.0' );
 
 define( 'WP_ROBOTS_TXT_DIR', plugin_dir_path( __FILE__ ) );
+
+/**
+ * Plugin's basename
+ */
+define( 'WP_ROBOTS_TXT_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
  * The core plugin file that is used to run our functionality.

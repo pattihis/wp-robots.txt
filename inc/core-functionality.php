@@ -42,7 +42,7 @@
 /**
  * Dynamically create the robots.txt file with our saved content.
  *
- * @since   1.0
+ * @since   1.2
  * @uses    get_option
  * @uses    esc_attr
  * @param string $output The contents of robots.txt filtered.
@@ -61,7 +61,7 @@ function robtxt_filter_robots( $output, $public ) {
 /**
  * Deactivation hook. Deletes our option containing the robots.txt content.
  *
- * @since   1.0
+ * @since   1.2
  * @uses    delete_option
  * @return  void
  */
@@ -72,7 +72,7 @@ function robtxt_deactivation() {
 /**
  * Activation hook.  Adds the option we'll be using.
  *
- * @since   1.0
+ * @since   1.2
  * @uses    add_option
  * @return  void
  */
