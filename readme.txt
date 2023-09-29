@@ -1,11 +1,11 @@
 === WP Robots Txt ===
-Contributors: chrisguitarguy, pattihis
+Contributors: pattihis
 Donate link: https://profiles.wordpress.org/pattihis/
 Tags: robots.txt, robots, seo
 Requires at least: 5.3.0
-Tested up to: 6.0.1
-Requires PHP: 5.6
-Stable tag: 1.2
+Tested up to: 6.3.1
+Requires PHP: 7.0
+Stable tag: 1.3
 License: GPL2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -20,8 +20,6 @@ Enter WP Robots Txt, a plugin that adds an additional field to the "Reading" adm
 Simply visit https://your-site.com/wp-admin/options-reading.php and you can control the contents of your https://your-site.com/robots.txt
 
 [Changelog](https://wordpress.org/plugins/wp-robots-txt/#developers)
-
-*WP Robots Txt* was originally developed by [chrisguitarguy](https://profiles.wordpress.org/chrisguitarguy/). The plugin has been adopted and updated by [George Pattihis](https://profiles.wordpress.org/pattihis/) who will continue development.
 
 == Installation ==
 
@@ -51,6 +49,10 @@ Yes.  Be careful! That said, `robots.txt` files are suggestions. They don't real
 [Here](https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt) is a general guide by Google and [here](https://wordpress.org/support/article/search-engine-optimization/) is the WordPress SEO documentation.
 
 == Changelog ==
+
+= 1.3 =
+* Ensure Compatibility with WP v6.3
+* Increase PHP minimum required version
 
 = 1.2 =
 * Update the default robots.txt content
