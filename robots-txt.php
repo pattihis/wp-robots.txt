@@ -4,19 +4,19 @@
  *
  * @category    WordPress
  * @package     WPRobotsTxt
- * @author      George Pattihis
- * @copyright   2022 George Pattihis
+ * @author      George Pattichis
+ * @copyright   2022 George Pattichis
  * @license     http://opensource.org/licenses/GPL-2.0 GPL-2.0+
  * @link        https://profiles.wordpress.org/pattihis/
  *
  * Plugin Name: WP Robots Txt
  * Plugin URI: https://github.com/pattihis/wp-robots.txt
  * Description: Edit your robots.txt file from the WordPress admin
- * Version: 1.3
+ * Version: 1.3.1
  * Requires at least: 5.3.0
- * Tested up to: 6.3.1
+ * Tested up to: 6.4.2
  * Requires PHP: 7.0
- * Author: George Pattihis
+ * Author: George Pattichis
  * Author URI: https://profiles.wordpress.org/pattihis/
  * License: GPL-2.0+
  * License URI: http://www.gnu.org/licenses/gpl-2.0.txt
@@ -24,7 +24,7 @@
  */
 
 /**
- * Copyright 2013  George Pattihis (gpattihis@gmail.com)
+ * Copyright 2013  George Pattichis (gpattihis@gmail.com)
  *
  * "WP Robots Txt" is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,21 +41,21 @@
  */
 
 // Exit if accessed directly.
-if (!defined('ABSPATH')) {
+if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
  * Current plugin version.
  */
-define('WP_ROBOTS_TXT_VERSION', '1.3.0');
+define( 'WP_ROBOTS_TXT_VERSION', '1.3.1' );
 
-define('WP_ROBOTS_TXT_DIR', plugin_dir_path(__FILE__));
+define( 'WP_ROBOTS_TXT_DIR', plugin_dir_path( __FILE__ ) );
 
 /**
  * Plugin's basename
  */
-define('WP_ROBOTS_TXT_BASENAME', plugin_basename(__FILE__));
+define( 'WP_ROBOTS_TXT_BASENAME', plugin_basename( __FILE__ ) );
 
 /**
  * The core plugin file that is used to run our functionality.
@@ -65,7 +65,7 @@ require_once WP_ROBOTS_TXT_DIR . 'inc/core-functionality.php';
 /**
  * The core plugin class that is used to define admin options and hooks.
  */
-if (is_admin()) {
+if ( is_admin() ) {
 	require_once WP_ROBOTS_TXT_DIR . 'inc/class-robtxt-admin-page.php';
 	ROBTXT_Admin_Page::init();
 }
@@ -73,14 +73,14 @@ if (is_admin()) {
 /**
  * The main hook that filters the contents of the generated file.
  */
-add_filter('robots_txt', 'robtxt_filter_robots', 10, 2);
+add_filter( 'robots_txt', 'robtxt_filter_robots', 10, 2 );
 
 /**
  * The code that runs during plugin activation.
  */
-register_activation_hook(__FILE__, 'robtxt_activation');
+register_activation_hook( __FILE__, 'robtxt_activation' );
 
 /**
  * The code that runs during plugin deactivation.
  */
-register_deactivation_hook(__FILE__, 'robtxt_deactivation');
+register_deactivation_hook( __FILE__, 'robtxt_deactivation' );

@@ -2,7 +2,7 @@
 /**
  * WP Robots Txt
  *
- * Copyright 2013  George Pattihis (gpattihis@gmail.com)
+ * Copyright 2013  George Pattichis (gpattihis@gmail.com)
  *
  * "WP Robots Txt" is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @category    WordPress
  * @package     WPRobotsTxt
- * @author      George Pattihis
- * @copyright   2013 George Pattihis
+ * @author      George Pattichis
+ * @copyright   2013 George Pattichis
  * @license     http://opensource.org/licenses/GPL-2.0 GPL-2.0+
  */
 
@@ -34,10 +34,10 @@
  * @param string $public The visibility option.
  * @return  string
  */
-function robtxt_filter_robots($output, $public) {
-	$content = get_option('robtxt_content');
-	if ($content) {
-		$output = esc_attr(wp_strip_all_tags($content));
+function robtxt_filter_robots( $output, $public ) {
+	$content = get_option( 'robtxt_content' );
+	if ( $content ) {
+		$output = esc_attr( wp_strip_all_tags( $content ) );
 	}
 
 	return $output;
@@ -51,7 +51,7 @@ function robtxt_filter_robots($output, $public) {
  * @return  void
  */
 function robtxt_deactivation() {
-	delete_option('robtxt_content');
+	delete_option( 'robtxt_content' );
 }
 
 /**
@@ -62,12 +62,12 @@ function robtxt_deactivation() {
  * @return  void
  */
 function robtxt_activation() {
-	add_option('robtxt_content', false);
+	add_option( 'robtxt_content', false );
 
 	// Backwards compatibility.
-	$old = get_option('cd_rdte_content');
-	if (false !== $old) {
-		update_option('robtxt_content', $old);
-		delete_option('cd_rdte_content');
+	$old = get_option( 'cd_rdte_content' );
+	if ( false !== $old ) {
+		update_option( 'robtxt_content', $old );
+		delete_option( 'cd_rdte_content' );
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * WP Robots Txt
  *
- * Copyright 2013  George Pattihis (gpattihis@gmail.com)
+ * Copyright 2013  George Pattichis (gpattihis@gmail.com)
  *
  * "WP Robots Txt" is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,8 @@
  *
  * @category    WordPress
  * @package     WPRobotsTxt
- * @author      George Pattihis
- * @copyright   2013 George Pattihis
+ * @author      George Pattichis
+ * @copyright   2013 George Pattichis
  * @license     http://opensource.org/licenses/GPL-2.0 GPL-2.0+
  */
 
@@ -54,6 +54,7 @@ class ROBTXT_Admin_Page {
 	 *
 	 * @since   1.2
 	 * @access  public
+	 * @return  object
 	 */
 	public static function instance() {
 		if ( null === self::$ins ) {
