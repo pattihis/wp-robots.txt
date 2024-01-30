@@ -206,10 +206,10 @@ class ROBTXT_Admin_Page {
 	public function robtxt_action_links( $links, $file ) {
 
 		if ( WP_ROBOTS_TXT_BASENAME === $file ) {
-			$spf_links = '<a href="' . get_admin_url() . 'options-reading.php" title="Edit your robots.txt">' . __( 'Settings', 'wp-robots-txt' ) . '</a>';
-			$spf_visit = '<a href="https://gp-web.dev/" title="Contact" target="_blank" >' . __( 'Contact', 'wp-robots-txt' ) . '</a>';
-			array_unshift( $links, $spf_visit );
-			array_unshift( $links, $spf_links );
+			$wpr_links = '<a href="' . get_admin_url() . 'options-reading.php" title="Edit your robots.txt">' . __( 'Settings', 'wp-robots-txt' ) . '</a>';
+			$wpr_visit = '<a href="https://gp-web.dev/" title="Contact" target="_blank" >' . __( 'Contact', 'wp-robots-txt' ) . '</a>';
+			array_unshift( $links, $wpr_visit );
+			array_unshift( $links, $wpr_links );
 		}
 
 		return $links;

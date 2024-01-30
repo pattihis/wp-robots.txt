@@ -12,7 +12,7 @@
  * Plugin Name: WP Robots Txt
  * Plugin URI: https://github.com/pattihis/wp-robots.txt
  * Description: Edit your robots.txt file from the WordPress admin
- * Version: 1.3.1
+ * Version: 1.3.2
  * Requires at least: 5.3.0
  * Tested up to: 6.4.2
  * Requires PHP: 7.0
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Current plugin version.
  */
-define( 'WP_ROBOTS_TXT_VERSION', '1.3.1' );
+define( 'WP_ROBOTS_TXT_VERSION', '1.3.2' );
 
 define( 'WP_ROBOTS_TXT_DIR', plugin_dir_path( __FILE__ ) );
 
