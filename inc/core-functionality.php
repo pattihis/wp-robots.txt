@@ -37,7 +37,7 @@
 function robtxt_filter_robots( $output, $public ) {
 	$content = get_option( 'robtxt_content' );
 	if ( $content ) {
-		$output = esc_attr( wp_strip_all_tags( $content ) );
+		$output = esc_attr( wp_strip_all_tags( $content ) ) . PHP_EOL;
 	}
 
 	return $output;
