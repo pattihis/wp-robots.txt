@@ -14,7 +14,7 @@
  * Description: Edit your robots.txt file from the WordPress admin
  * Version: 1.3.4
  * Requires at least: 5.3.0
- * Tested up to: 6.4.3
+ * Tested up to: 6.7.1
  * Requires PHP: 7.0
  * Author: George Pattichis
  * Author URI: https://profiles.wordpress.org/pattihis/
