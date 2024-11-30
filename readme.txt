@@ -3,9 +3,9 @@ Contributors: pattihis
 Donate link: https://profiles.wordpress.org/pattihis/
 Tags: robots.txt, robots, seo
 Requires at least: 5.3.0
-Tested up to: 6.4.3
+Tested up to: 6.7.1
 Requires PHP: 7.0
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPL2
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ Yes.  Be careful! That said, `robots.txt` files are suggestions. They don't real
 [Here](https://developers.google.com/webmasters/control-crawl-index/docs/robots_txt) is a general guide by Google and [here](https://wordpress.org/support/article/search-engine-optimization/) is the WordPress SEO documentation.
 
 == Changelog ==
+
+= 1.3.4 =
+* Compatibility with WordPress 6.7
 
 = 1.3.3 =
 * Add Line Break to allow appending more rules. Thanks @flberger
