@@ -24,6 +24,11 @@
  * @license     http://opensource.org/licenses/GPL-2.0 GPL-2.0+
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Wrapper for all our admin area functionality.
  *
@@ -32,11 +37,11 @@
 class ROBTXT_Admin_Page {
 
 	/**
-	 * The contents of the text-area.
+	 * Singleton instance.
 	 *
 	 * @since    1.2
 	 * @access   private
-	 * @var      string    $ins
+	 * @var      ROBTXT_Admin_Page|null
 	 */
 	private static $ins = null;
 
@@ -82,7 +87,7 @@ class ROBTXT_Admin_Page {
 			delete_option( 'cd_rdte_content' );
 		}
 
-		add_filter( 'plugin_action_links', array( self::instance(), 'robtxt_action_links' ), 10, 2 );
+		add_filter( 'plugin_action_links_' . WP_ROBOTS_TXT_BASENAME, array( self::instance(), 'robtxt_action_links' ) );
 	}
 
 	/**
@@ -99,7 +104,12 @@ class ROBTXT_Admin_Page {
 		register_setting(
 			'reading',
 			$this->setting,
-			array( $this, 'robtxt_clean_setting' )
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => array( $this, 'robtxt_clean_setting' ),
+				'default'           => '',
+				'show_in_rest'      => false,
+			)
 		);
 
 		add_settings_section(
@@ -130,7 +140,9 @@ class ROBTXT_Admin_Page {
 	 */
 	public function field() {
 		$content = get_option( $this->setting );
-		if ( ! $content ) {
+		if ( is_string( $content ) && '' !== $content ) {
+			$content = wp_specialchars_decode( $content, ENT_QUOTES );
+		} else {
 			$content = $this->robtxt_get_default_robots();
 		}
 
@@ -140,24 +152,60 @@ class ROBTXT_Admin_Page {
 			esc_textarea( $content )
 		);
 
-		$robots_link = '<a href="' . site_url() . '/robots.txt" target="_blank">robots.txt</a>';
+		if ( is_readable( ABSPATH . 'robots.txt' ) ) {
+			echo '<p class="description">';
+			echo esc_html__( 'A physical robots.txt file exists in the site root. Search engines will use that file instead of this setting.', 'wp-robots-txt' );
+			echo '</p>';
+		}
+
+		if ( ! get_option( 'blog_public' ) ) {
+			echo '<p class="description">';
+			echo esc_html__( 'Search engines are discouraged from indexing this site. WordPress uses a noindex tag for that; it does not add Disallow: / here. Add that rule yourself if you want it.', 'wp-robots-txt' );
+			echo '</p>';
+		}
+
+		$robots_link = sprintf(
+			'<a href="%s" target="_blank" rel="noopener noreferrer">robots.txt</a>',
+			esc_url( home_url( '/robots.txt' ) )
+		);
 		echo '<p class="description">';
 		/* translators: %s is the link to see your robots.txt file */
-		echo wp_kses( sprintf( __( 'The content of your %s file. Delete the above and save to restore the default.', 'wp-robots-txt' ), ( $robots_link ) ), 'post' );
+		echo wp_kses(
+			sprintf(
+				__( 'The content of your %s file. Delete the above and save to restore the default.', 'wp-robots-txt' ),
+				$robots_link
+			),
+			array(
+				'a' => array(
+					'href'   => true,
+					'target' => true,
+					'rel'    => true,
+				),
+			)
+		);
 		echo '</p>';
 	}
 
 	/**
-	 * Strips tags and escapes any html entities that goes into the
-	 * robots.txt field
+	 * Sanitize robots.txt content for storage.
+	 *
+	 * Do not HTML-escape: the file is text/plain. Do not use
+	 * sanitize_textarea_field(), which strips %xx sequences used in paths.
 	 *
 	 * @since 1.2
-	 * @param string $contents The contents of the text-area.
-	 * @uses esc_html
-	 * @uses add_settings_error
+	 * @param mixed $contents The contents of the text-area.
+	 * @return string
 	 */
 	public function robtxt_clean_setting( $contents ) {
-		if ( empty( $contents ) ) {
+		if ( ! is_string( $contents ) ) {
+			$contents = '';
+		}
+
+		$contents = str_replace( array( "\r\n", "\r", "\0" ), array( "\n", "\n", '' ), $contents );
+		$contents = wp_strip_all_tags( $contents );
+		$contents = trim( $contents );
+
+		if ( '' === $contents ) {
 			add_settings_error(
 				$this->setting,
 				'robtxt-restored',
@@ -166,7 +214,7 @@ class ROBTXT_Admin_Page {
 			);
 		}
 
-		return esc_html( wp_strip_all_tags( $contents ) );
+		return $contents;
 	}
 
 	/**
@@ -178,20 +226,34 @@ class ROBTXT_Admin_Page {
 	 * @return  string The default robots.txt content
 	 */
 	protected function robtxt_get_default_robots() {
-		$public = get_option( 'blog_public' );
+		$admin_path = $this->robtxt_url_path( admin_url(), '/wp-admin/' );
+		$ajax_path  = $this->robtxt_url_path( admin_url( 'admin-ajax.php' ), '/wp-admin/admin-ajax.php' );
 
-		$output = "User-agent: *\n";
-		if ( '0' === $public ) {
-			$output .= "Disallow: /\n";
-		} else {
-			$site_url = wp_parse_url( site_url(), PHP_URL_PATH );
-			$path     = ( ! empty( $site_url['path'] ) ) ? $site_url['path'] : '';
-			$output  .= "Disallow: $path/wp-admin/\n";
-			$output  .= "Allow: $path/wp-admin/admin-ajax.php\n";
-			$output  .= "\nSitemap: " . esc_url( ( new WP_Sitemaps() )->index->get_index_url() ) . "\n";
+		$output  = "User-agent: *\n";
+		$output .= 'Disallow: ' . $admin_path . "\n";
+		$output .= 'Allow: ' . $ajax_path . "\n";
+
+		if ( function_exists( 'wp_sitemaps_get_server' ) ) {
+			$sitemaps = wp_sitemaps_get_server();
+			if ( $sitemaps->sitemaps_enabled() ) {
+				$output .= "\nSitemap: " . esc_url_raw( $sitemaps->index->get_index_url() ) . "\n";
+			}
 		}
 
 		return $output;
+	}
+
+	/**
+	 * Path component of a URL, or a fallback if parsing fails.
+	 *
+	 * @since 1.3.6
+	 * @param string $url      Absolute URL.
+	 * @param string $fallback Path to use when none is found.
+	 * @return string
+	 */
+	protected function robtxt_url_path( $url, $fallback ) {
+		$path = wp_parse_url( $url, PHP_URL_PATH );
+		return ( is_string( $path ) && '' !== $path ) ? $path : $fallback;
 	}
 
 	/**
@@ -200,17 +262,22 @@ class ROBTXT_Admin_Page {
 	 * @since  1.2
 	 * @access public
 	 * @param  array $links Default Links.
-	 * @param  array $file Plugin's root filepath.
 	 * @return array Links list to display in plugins page.
 	 */
-	public function robtxt_action_links( $links, $file ) {
+	public function robtxt_action_links( $links ) {
+		$settings = sprintf(
+			'<a href="%s">%s</a>',
+			esc_url( admin_url( 'options-reading.php' ) ),
+			esc_html__( 'Settings', 'wp-robots-txt' )
+		);
+		$contact  = sprintf(
+			'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+			esc_url( 'https://gp-web.dev/' ),
+			esc_html__( 'Contact', 'wp-robots-txt' )
+		);
 
-		if ( WP_ROBOTS_TXT_BASENAME === $file ) {
-			$wpr_links = '<a href="' . get_admin_url() . 'options-reading.php" title="Edit your robots.txt">' . __( 'Settings', 'wp-robots-txt' ) . '</a>';
-			$wpr_visit = '<a href="https://gp-web.dev/" title="Contact" target="_blank" >' . __( 'Contact', 'wp-robots-txt' ) . '</a>';
-			array_unshift( $links, $wpr_visit );
-			array_unshift( $links, $wpr_links );
-		}
+		array_unshift( $links, $contact );
+		array_unshift( $links, $settings );
 
 		return $links;
 	}

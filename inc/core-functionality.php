@@ -24,20 +24,32 @@
  * @license     http://opensource.org/licenses/GPL-2.0 GPL-2.0+
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
- * Dynamically create the robots.txt file with our saved content.
+ * Filter the virtual robots.txt body.
+ *
+ * robots.txt is served as text/plain, so HTML entity escaping would corrupt
+ * URLs and rules. Saved content is always applied: site visibility is a
+ * separate Reading setting (since WP 5.3 it uses a noindex meta tag, not
+ * Disallow: /). $public is accepted because the robots_txt filter passes it
+ * (bool in WP 7.1+, '0'/'1' on older versions).
  *
  * @since   1.2
- * @uses    get_option
- * @uses    esc_attr
- * @param string $output The contents of robots.txt filtered.
- * @param string $public The visibility option.
+ * @param string      $output The contents of robots.txt filtered.
+ * @param bool|string $public Whether the site is considered public.
  * @return  string
  */
 function robtxt_filter_robots( $output, $public ) {
+	unset( $public );
+
 	$content = get_option( 'robtxt_content' );
-	if ( $content ) {
-		$output = esc_attr( wp_strip_all_tags( $content ) ) . PHP_EOL;
+	if ( is_string( $content ) && '' !== $content ) {
+		// Decode entities from older versions that stored esc_html() output.
+		$output = wp_specialchars_decode( $content, ENT_QUOTES ) . "\n";
 	}
 
 	return $output;
